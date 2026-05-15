@@ -1,18 +1,18 @@
-# Dockerfile - Spark with additional Python libraries and JDBC drivers
 FROM apache/spark:4.0.1
 
 USER root
 
-COPY data/ data/
+# Install Python libraries
+COPY requirements.txt .
 
-# Install Python data science libraries
-RUN pip install --no-cache-dir \
-    pandas \
-    numpy \
-    pyarrow \
-    delta-spark
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Add PostgreSQL JDBC driver for database connectivity
+# PostgreSQL JDBC Driver
 ADD https://jdbc.postgresql.org/download/postgresql-42.7.1.jar /opt/spark/jars/
+
+# Create useful directories
+RUN mkdir -p /opt/spark/jobs \
+    && mkdir -p /opt/spark/data \
+    && mkdir -p /opt/spark/warehouse
 
 USER spark
